@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="D:/Eclipse workspace 2/CryptoCurrencyAnalysis/lib/bitcoinj-core-0.13.4.jar"/>
+	<classpathentry kind="lib" path="D:/Eclipse workspace 2/CryptoCurrencyAnalysis/lib/bitcoinj-core-0.13.4-javadoc.jar"/>
+	<classpathentry kind="lib" path="D:/Eclipse workspace 2/CryptoCurrencyAnalysis/lib/bitcoinj-core-0.13.4-sources.jar"/>
+	<classpathentry kind="lib" path="D:/Eclipse workspace 2/CryptoCurrencyAnalysis/lib/core-1.51.0.0.jar"/>
+	<classpathentry kind="lib" path="D:/Eclipse workspace 2/CryptoCurrencyAnalysis/lib/guava-16.0.1.jar"/>
+	<classpathentry kind="lib" path="D:/Eclipse workspace 2/CryptoCurrencyAnalysis/lib/jcip-annotations-1.0.jar"/>
+	<classpathentry kind="lib" path="D:/Eclipse workspace 2/CryptoCurrencyAnalysis/lib/jsr305-2.0.1.jar"/>
+	<classpathentry kind="lib" path="D:/Eclipse workspace 2/CryptoCurrencyAnalysis/lib/okhttp-2.2.0.jar"/>
+	<classpathentry kind="lib" path="D:/Eclipse workspace 2/CryptoCurrencyAnalysis/lib/okio-1.2.0.jar"/>
+	<classpathentry kind="lib" path="D:/Eclipse workspace 2/CryptoCurrencyAnalysis/lib/orchid-1.1.1.jar"/>
+	<classpathentry kind="lib" path="D:/Eclipse workspace 2/CryptoCurrencyAnalysis/lib/protobuf-java-2.5.0.jar"/>
+	<classpathentry kind="lib" path="D:/Eclipse workspace 2/CryptoCurrencyAnalysis/lib/scrypt-1.4.0.jar"/>
+	<classpathentry kind="lib" path="D:/Eclipse workspace 2/CryptoCurrencyAnalysis/lib/slf4j-api-1.7.7.jar"/>
+	<classpathentry kind="lib" path="D:/Desktop/Martijn/APIs/slf4j-simple-1.7.18.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
