@@ -9,7 +9,6 @@ import org.bitcoinj.utils.BriefLogFormatter;
 import java.sql.*;
 
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -39,21 +38,44 @@ public class Download {
         Connection conn = DriverManager.getConnection(url);
 
 
-        PreparedStatement statement = conn.prepareStatement("INSERT INTO \"Block\" (\"hashMerkleRoot\", txn_counter) VALUES (?, ?)");
+        PreparedStatement blockStmt = conn.prepareStatement("INSERT INTO \"Block\" (\"block_id\", \"hashMerkleRoot\", txn_counter) VALUES (?, ?, ?)");
+        PreparedStatement blockHeaderStmt = conn.prepareStatement("INSERT INTO \"public\".\"BlockHeader\" (\"id\", \"nVersion\", \"hashPrevBlock\", \"hashMerkleRoot\", \"nTime\", \"nBits\", \"nonce\") \n" +
+                "VALUES (?, ?, ?, ?, ?, ?, ?);\n");
+        int id = 50000;
 
-        addBlock(b, statement);
-        for (int i = 0; i < 1000; i++) {
+        addBlock(id, blockStmt, b);
+        addBlockHeader(id, b, blockHeaderStmt);
+        for (int i = 0; i < 100; i++) {
             b = peer.getBlock(b.getPrevBlockHash()).get();
-            addBlock(b, statement);
+            addBlock(--id, blockStmt, b);
+            addBlockHeader(id, b, blockHeaderStmt);
+
+            if(i % 1000 == 0) {
+                blockStmt.executeBatch();
+                blockHeaderStmt.executeBatch();
+            }
         }
-        statement.executeBatch();
+        blockStmt.executeBatch();
+        blockHeaderStmt.executeBatch();
+
     }
 
-    private static void addBlock(Block b, PreparedStatement statement) throws SQLException {
-        statement.setString(1, b.getHashAsString());
+    private static void addBlockHeader(int id, Block b, PreparedStatement blockHeaderStmt) throws SQLException {
+        blockHeaderStmt.setInt(1, id);
+        blockHeaderStmt.setInt(2, (int) b.getVersion());
+        blockHeaderStmt.setString(3, b.getPrevBlockHash().toString());
+        blockHeaderStmt.setString(4, b.getHashAsString());
+        blockHeaderStmt.setTimestamp(5, new Timestamp(b.getTimeSeconds()));
+        blockHeaderStmt.setLong(6, b.getDifficultyTarget());
+        blockHeaderStmt.setLong(7, b.getNonce());
+        blockHeaderStmt.addBatch();
+    }
+
+    private static void addBlock(int id, PreparedStatement statement, Block b) throws SQLException {
+        statement.setInt(1, id);
+        statement.setString(2, b.getHashAsString());
         int size = getSize(b);
-        statement.setInt(2, size);
-        statement.execute();
+        statement.setInt(3, size);
         statement.addBatch();
     }
 
