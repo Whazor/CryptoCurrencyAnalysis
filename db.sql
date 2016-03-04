@@ -50,8 +50,8 @@ CREATE TABLE "BlockHeader" (
     "hashPrevBlock" character varying(255),
     "hashMerkleRoot" character varying(255),
     "nTime" timestamp without time zone,
-    "nBits" smallint,
-    nonce smallint
+    "nBits" bigint,
+    nonce bigint
 );
 
 
@@ -329,109 +329,6 @@ ALTER TABLE ONLY "TxnOut" ALTER COLUMN id SET DEFAULT nextval('"TxnOut_id_seq"':
 --
 
 ALTER TABLE ONLY "TxnOut" ALTER COLUMN txn_id SET DEFAULT nextval('"TxnOut_txn_id_seq"'::regclass);
-
-
---
--- Data for Name: Block; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY "Block" (block_id, "hashMerkleRoot", txn_counter) FROM stdin;
-\.
-
-
---
--- Data for Name: BlockHeader; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY "BlockHeader" (id, "nVersion", "hashPrevBlock", "hashMerkleRoot", "nTime", "nBits", nonce) FROM stdin;
-\.
-
-
---
--- Name: BlockHeader_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('"BlockHeader_id_seq"', 1, false);
-
-
---
--- Name: Block_block_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('"Block_block_id_seq"', 1, false);
-
-
---
--- Data for Name: Txn; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY "Txn" (txn_id, "nVersion", "inCounter", "outCounter", lock_time, block_id) FROM stdin;
-\.
-
-
---
--- Data for Name: TxnIn; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY "TxnIn" (id, "hashPrevTxn", "txnOut_id", "scriptLen", "scriptSig", "seqNo", txn_id) FROM stdin;
-\.
-
-
---
--- Name: TxnIn_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('"TxnIn_id_seq"', 1, false);
-
-
---
--- Name: TxnIn_txnOut_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('"TxnIn_txnOut_id_seq"', 1, false);
-
-
---
--- Name: TxnIn_txn_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('"TxnIn_txn_id_seq"', 1, false);
-
-
---
--- Data for Name: TxnOut; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY "TxnOut" (id, value, "scriptLen", "scriptPubKey", txn_id) FROM stdin;
-\.
-
-
---
--- Name: TxnOut_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('"TxnOut_id_seq"', 1, false);
-
-
---
--- Name: TxnOut_txn_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('"TxnOut_txn_id_seq"', 1, false);
-
-
---
--- Name: Txn_block_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('"Txn_block_id_seq"', 1, false);
-
-
---
--- Name: Txn_txn_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('"Txn_txn_id_seq"', 1, false);
 
 
 --
