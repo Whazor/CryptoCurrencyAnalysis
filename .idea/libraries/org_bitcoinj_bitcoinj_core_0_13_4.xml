@@ -1,0 +1,24 @@
+<component name="libraryTable">
+  <library name="org.bitcoinj:bitcoinj-core:0.13.4" type="repository">
+    <properties maven-id="org.bitcoinj:bitcoinj-core:0.13.4" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/bitcoinj-core-0.13.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slf4j-api-1.7.7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/core-1.51.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/protobuf-java-2.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/guava-16.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsr305-2.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jcip-annotations-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/scrypt-1.4.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/orchid-1.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/okhttp-2.2.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/okio-1.2.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/lib/bitcoinj-core-0.13.4-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/bitcoinj-core-0.13.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

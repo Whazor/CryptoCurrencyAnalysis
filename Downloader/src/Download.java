@@ -9,6 +9,8 @@ import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.BlockStoreException;
 import org.bitcoinj.utils.BriefLogFormatter;
 
+import java.sql.*;
+
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -32,13 +34,14 @@ public class Download {
         Peer peer = kit.peerGroup().getDownloadPeer();
         Block b = peer.getBlock(bs.getChainHead().getHeader().getHash()).get();
 
+
+
         b.getTime();
 
         for (int i = 0; i < 1000; i++) {
-            b = peer.getBlock(b.getPrevBlockHash()).get();
+            b = peer.getBlock(b.getPrevBlockHash()).get(0).getTransactions().get(0).getExchangeRate();
 
-
-            b.getTransactions().get(0)
+//            b.getTransactions().get(0)
             System.out.println(b.getHashAsString());
         }
     }
