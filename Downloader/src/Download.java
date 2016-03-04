@@ -40,14 +40,15 @@ public class Download {
 
         PreparedStatement blockStmt = conn.prepareStatement("INSERT INTO \"Block\" (\"block_id\", \"hashMerkleRoot\", txn_counter) VALUES (?, ?, ?)");
         PreparedStatement blockHeaderStmt = conn.prepareStatement("INSERT INTO \"public\".\"BlockHeader\" (\"id\", \"nVersion\", \"hashPrevBlock\", \"hashMerkleRoot\", \"nTime\", \"nBits\", \"nonce\") \n" +
-                "VALUES (?, ?, ?, ?, ?, ?, ?);\n");
+                "VALUES (?, ?, ?, ?, ?, ?, ?);");
         int id = 50000;
 
         addBlock(id, blockStmt, b);
         addBlockHeader(id, b, blockHeaderStmt);
         for (int i = 0; i < 100; i++) {
             b = peer.getBlock(b.getPrevBlockHash()).get();
-            addBlock(--id, blockStmt, b);
+            id--;
+            addBlock(id, blockStmt, b);
             addBlockHeader(id, b, blockHeaderStmt);
 
             if(i % 1000 == 0) {
