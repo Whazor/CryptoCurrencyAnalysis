@@ -39,10 +39,11 @@ public class Download {
         Connection conn = DriverManager.getConnection(url);
 
 
-        PreparedStatement statement = conn.prepareStatement("INSERT INTO Block (hashMerkleRoot, txn_counter) VALUES (?, ?)");
+        PreparedStatement statement = conn.prepareStatement("INSERT INTO \"Block\" (\"hashMerkleRoot\", txn_counter) VALUES (?, ?)");
 
         addBlock(b, statement);
         for (int i = 0; i < 1000; i++) {
+            b = peer.getBlock(b.getPrevBlockHash()).get();
             addBlock(b, statement);
         }
         statement.executeBatch();
