@@ -54,6 +54,8 @@ public class Download {
             if(i % 1000 == 0) {
                 blockStmt.executeBatch();
                 blockHeaderStmt.executeBatch();
+                blockStmt.clearBatch();
+                blockHeaderStmt.clearBatch();
             }
         }
         blockStmt.executeBatch();
