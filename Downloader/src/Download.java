@@ -1,15 +1,24 @@
-import com.google.common.util.concurrent.Service;
-import org.bitcoinj.core.*;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+
+import org.bitcoinj.core.Block;
+import org.bitcoinj.core.BlockChain;
+import org.bitcoinj.core.NetworkParameters;
+import org.bitcoinj.core.Peer;
+import org.bitcoinj.core.Transaction;
 import org.bitcoinj.kits.WalletAppKit;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.BlockStoreException;
 import org.bitcoinj.utils.BriefLogFormatter;
 
-import java.sql.*;
-
-import java.util.List;
-import java.util.concurrent.ExecutionException;
+import com.google.common.util.concurrent.Service;
 
 /**
  * Created by nanne on 26/02/16.
@@ -34,7 +43,7 @@ public class Download {
 
         Class.forName("org.postgresql.Driver");
 
-        String url = "jdbc:postgresql://localhost/bitcoin"; // user=fred&password=secret&ssl=true
+        String url = "jdbc:postgresql://localhost/bitcoin?user=bitcoin&password=a"; // user=fred&password=secret&ssl=true
         Connection conn = DriverManager.getConnection(url);
 
 
