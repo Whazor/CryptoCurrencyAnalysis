@@ -10,5 +10,8 @@
     <orderEntry type="library" name="org.bitcoinj:bitcoinj-core:0.13.4" level="project" />
     <orderEntry type="library" name="org.postgresql:postgresql:9.4.1208.jre7" level="project" />
     <orderEntry type="library" name="Simple Logging Facade for Java:1.6.2" level="project" />
+    <orderEntry type="library" name="org.jooq:jooq:3.7.3" level="project" />
+    <orderEntry type="library" name="org.jooq:jooq-meta:3.7.3" level="project" />
+    <orderEntry type="library" name="org.jooq:jooq-codegen:3.7.3" level="project" />
   </component>
 </module>

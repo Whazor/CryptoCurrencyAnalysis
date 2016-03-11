@@ -27,5 +27,8 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="library" name="org.jooq:jooq:3.7.3" level="project" />
+    <orderEntry type="library" name="org.jooq:jooq-meta:3.7.3" level="project" />
+    <orderEntry type="library" name="org.jooq:jooq-codegen:3.7.3" level="project" />
   </component>
 </module>
