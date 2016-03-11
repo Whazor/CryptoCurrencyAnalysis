@@ -1,7 +1,9 @@
 import com.google.common.util.concurrent.Service;
-import jooq.database.tables.records.*;
+import jooq.database.tables.records.BlockRecord;
+import jooq.database.tables.records.TxnRecord;
+import jooq.database.tables.records.TxninRecord;
+import jooq.database.tables.records.TxnoutRecord;
 import org.bitcoinj.core.*;
-import org.bitcoinj.core.Block;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.kits.WalletAppKit;
 import org.bitcoinj.params.MainNetParams;
@@ -11,17 +13,16 @@ import org.bitcoinj.utils.BriefLogFormatter;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
-import static jooq.database.Tables.*;
-import static org.jooq.impl.DSL.*;
-
-import java.sql.*;
-
-
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
+import static jooq.database.Tables.*;
 
 /**
  * Created by nanne on 26/02/16.
@@ -48,7 +49,7 @@ public class Download {
 
         String url = "jdbc:postgresql://localhost/bitcoin";
 
-        try (Connection conn = DriverManager.getConnection(url, "nanne", "")) { //user en pass
+        try (Connection conn = DriverManager.getConnection(url, "bitcoin", "a")) { //user en pass bitcoin&password=a
             DSLContext create = DSL.using(conn, SQLDialect.POSTGRES_9_5);
 
             for (int i = 0; i < 100; i++) {
@@ -150,26 +151,6 @@ public class Download {
 //        blockHeaderStmt.executeBatch();
 
     }
-
-    private static void addBlockHeader(int id, Block b, PreparedStatement blockHeaderStmt) throws SQLException {
-        blockHeaderStmt.setInt(1, id);
-        blockHeaderStmt.setInt(2, (int) b.getVersion());
-        blockHeaderStmt.setString(3, b.getPrevBlockHash().toString());
-        blockHeaderStmt.setString(4, b.getHashAsString());
-        blockHeaderStmt.setTimestamp(5, new Timestamp(b.getTimeSeconds()));
-        blockHeaderStmt.setLong(6, b.getDifficultyTarget());
-        blockHeaderStmt.setLong(7, b.getNonce());
-        blockHeaderStmt.addBatch();
-    }
-
-    private static void addBlock(int id, PreparedStatement statement, Block b) throws SQLException {
-        statement.setInt(1, id);
-        statement.setString(2, b.getHashAsString());
-        int size = getSize(b);
-        statement.setInt(3, size);
-        statement.addBatch();
-    }
-
 //    private static void addTx(int id, ){
 //
 //    }
