@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Analyzer/Analyzer.iml" filepath="$PROJECT_DIR$/Analyzer/Analyzer.iml" />
       <module fileurl="file://$PROJECT_DIR$/CryptoCurrencyAnalysis.iml" filepath="$PROJECT_DIR$/CryptoCurrencyAnalysis.iml" />
       <module fileurl="file://$PROJECT_DIR$/Downloader/Downloader.iml" filepath="$PROJECT_DIR$/Downloader/Downloader.iml" />
     </modules>
