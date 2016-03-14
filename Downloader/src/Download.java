@@ -7,7 +7,6 @@ import org.bitcoinj.core.*;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.kits.WalletAppKit;
 import org.bitcoinj.params.MainNetParams;
-import org.bitcoinj.script.Script;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.BlockStoreException;
 import org.bitcoinj.utils.BriefLogFormatter;
@@ -72,9 +71,9 @@ public class Download {
                         (short)b.getVersion(),
                         b.getPrevBlockHash().toString(),
                         b.getHashAsString(),
-                        new Timestamp(b.getTimeSeconds()),
+                        new Timestamp(b.getTimeSeconds() * 1000),
                         b.getDifficultyTarget(),
-                        b.getNonce());
+                        b.getNonce()).execute();
 
 
                 InsertValuesStep5<TxnRecord, Short, Short, Short, Timestamp, Integer> into = create.insertInto(
@@ -85,7 +84,7 @@ public class Download {
 
 
                 for (Transaction t : list) {
-                    Result<TxnRecord> result = into.values((short) t.getVersion(), (short) t.getInputs().size(), (short) t.getOutputs().size(), new Timestamp(t.getLockTime()), block_id)
+                    Result<TxnRecord> result = into.values((short) t.getVersion(), (short) t.getInputs().size(), (short) t.getOutputs().size(), new Timestamp(t.getLockTime() * 1000), block_id)
                             .returning(TXN.TXN_ID)
                             .fetch();
                     Integer txn_id = result.get(0).getValue(TXN.TXN_ID);
@@ -93,13 +92,21 @@ public class Download {
                     InsertValuesStep4<TxnoutRecord, Long, Short, String, Integer> insert_txout = create.insertInto(
                             TXNOUT, TXNOUT.VALUE, TXNOUT.SCRIPTLEN, TXNOUT.SCRIPTPUBKEY, TXNOUT.TXN_ID);
 
-                    Map<TransactionOutput, Integer> map = new HashMap<>();
+                    Map<Integer, Integer> map = new HashMap<>();
                     for (TransactionOutput tout : t.getOutputs()) {
+                        short length = 0;
+                        String script = "";
+                        try {
+                            length = (short) tout.getScriptBytes().length;
+                            script = tout.getScriptPubKey().toString();
+                        } catch (ScriptException ignored) {
+
+                        }
                         Integer txnId = insert_txout.values(tout.getValue().getValue(),
-                                (short) tout.getScriptBytes().length,
-                                tout.getScriptPubKey().toString(),
+                                length,
+                                script,
                                 txn_id).returning(TXNOUT.ID).fetchOne().getTxnId();
-                        map.put(tout, txnId);
+                        map.put(tout.getIndex(), txnId);
                     }
 
                     InsertValuesStep6<TxninRecord, String, Integer, Short, String, Short, Integer> insert_txin = create.insertInto(
@@ -108,7 +115,10 @@ public class Download {
                     String prev = "";
                     for (TransactionInput tin : t.getInputs()) {
                         TransactionOutput output = tin.getConnectedOutput();
-                        Integer txnOut_id = map.get(output);
+                        Integer txnOut_id = null;
+                        if (output != null) {
+                            txnOut_id = map.get(output.getIndex());
+                        }
 
                         short length = 0;
                         String script = "";
@@ -124,7 +134,7 @@ public class Download {
                                 length,
                                 script,
                                 (short)tin.getSequenceNumber(),
-                                txn_id);
+                                txn_id).execute();
                         try {
                             prev = tin.getHash().toString();
                         } catch(UnsupportedOperationException ignored) {
