@@ -422,4 +422,4 @@ ALTER TABLE ONLY "Txn"
 --
 -- PostgreSQL database dump complete
 --
-
+ALTER TABLE "TxnOut" ALTER COLUMN "scriptPubKey" TYPE text USING "scriptPubKey"::text;
