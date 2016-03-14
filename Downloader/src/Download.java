@@ -7,6 +7,7 @@ import org.bitcoinj.core.*;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.kits.WalletAppKit;
 import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.script.Script;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.BlockStoreException;
 import org.bitcoinj.utils.BriefLogFormatter;
@@ -54,7 +55,7 @@ public class Download {
 
             for (int i = 0; i < 100; i++) {
                 Result<BlockRecord> fetch = create.insertInto(BLOCK, BLOCK.HASHMERKLEROOT, BLOCK.TXN_COUNTER)
-                        .values("blasad", 2)
+                        .values(b.getHashAsString(), b.getTransactions().size())
                         .returning(BLOCK.BLOCK_ID)
                         .fetch();
                 Integer block_id = fetch.get(0).getValue(BLOCK.BLOCK_ID);
@@ -109,8 +110,26 @@ public class Download {
                         TransactionOutput output = tin.getConnectedOutput();
                         Integer txnOut_id = map.get(output);
 
-                        insert_txin.values(prev, txnOut_id, (short)tin.getScriptBytes().length, tin.getScriptSig().toString(), (short)tin.getSequenceNumber(), txn_id);
-                        prev = tin.getHash().toString();
+                        short length = 0;
+                        String script = "";
+                        try {
+                            length = (short) tin.getScriptBytes().length;
+                            script = tin.getScriptSig().toString();
+                        } catch (ScriptException ignored) {
+
+                        }
+                        insert_txin.values(
+                                prev,
+                                txnOut_id,
+                                length,
+                                script,
+                                (short)tin.getSequenceNumber(),
+                                txn_id);
+                        try {
+                            prev = tin.getHash().toString();
+                        } catch(UnsupportedOperationException ignored) {
+                            prev = "";
+                        }
                     }
                 }
 
@@ -121,42 +140,5 @@ public class Download {
         catch (Exception e) {
             e.printStackTrace();
         }
-
-//        PreparedStatement blockStmt = conn.prepareStatement("INSERT INTO \"Block\" (\"block_id\", \"hashMerkleRoot\", txn_counter) VALUES (?, ?, ?)");
-//        PreparedStatement blockHeaderStmt = conn.prepareStatement("INSERT INTO \"public\".\"BlockHeader\" (\"id\", \"nVersion\", \"hashPrevBlock\", \"hashMerkleRoot\", \"nTime\", \"nBits\", \"nonce\") \n" +
-//                "VALUES (?, ?, ?, ?, ?, ?, ?);");
-//        PreparedStatement Stmt = conn.prepareStatement("INSERT INTO \"public\".\"Txn\" (\"txn_id\", \"nVersion\", \"inCounter\", \"outCounter\", \"lock_time\", \"block_id\") \n" +
-//                "VALUES (?, ?, ?, ?, ?, ?)");
-//        int id = 50000;
-//
-
-//        addBlock(id, blockStmt, b);
-//        addBlockHeader(id, b, blockHeaderStmt);
-//        System.out.println(b.getHashAsString());
-//        for (int i = 0; i < 100; i++) {
-//            b = peer.getBlock(b.getPrevBlockHash()).get();
-//            System.out.println(b.getHashAsString());
-//            id--;
-//            addBlock(id, blockStmt, b);
-//            addBlockHeader(id, b, blockHeaderStmt);
-//
-//            if(i % 1000 == 0) {
-//                blockStmt.executeBatch();
-//                blockHeaderStmt.executeBatch();
-//                blockStmt.clearBatch();
-//                blockHeaderStmt.clearBatch();
-//            }
-//        }
-//        blockStmt.executeBatch();
-//        blockHeaderStmt.executeBatch();
-
-    }
-//    private static void addTx(int id, ){
-//
-//    }
-
-    private static int getSize(Block b) {
-        List<Transaction> list = b.getTransactions();
-        return list == null ? 0 : list.size();
     }
 }
