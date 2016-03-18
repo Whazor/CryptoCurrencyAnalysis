@@ -39,7 +39,7 @@ public class DownloadTest {
 
         b.getTime();
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 3; i++) {
             b = peer.getBlock(b.getPrevBlockHash()).get();
             System.out.println(b.getTime());
             for (Transaction t : b.getTransactions()) {
@@ -55,6 +55,7 @@ public class DownloadTest {
             	//System.out.println("Fee: " + coinToString(t.getFee()));
             }
             System.out.println(b.getHashAsString());
+            System.out.println("That was block " + (i+1));
         }
     }
     

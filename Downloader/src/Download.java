@@ -1,28 +1,46 @@
-import com.google.common.util.concurrent.Service;
-import jooq.database.tables.records.BlockRecord;
-import jooq.database.tables.records.TxnRecord;
-import jooq.database.tables.records.TxninRecord;
-import jooq.database.tables.records.TxnoutRecord;
-import org.bitcoinj.core.*;
-import org.bitcoinj.core.Transaction;
-import org.bitcoinj.kits.WalletAppKit;
-import org.bitcoinj.params.MainNetParams;
-import org.bitcoinj.store.BlockStore;
-import org.bitcoinj.store.BlockStoreException;
-import org.bitcoinj.utils.BriefLogFormatter;
-import org.jooq.*;
-import org.jooq.impl.DSL;
+import static jooq.database.Tables.BLOCK;
+import static jooq.database.Tables.BLOCKHEADER;
+import static jooq.database.Tables.TXN;
+import static jooq.database.Tables.TXNIN;
+import static jooq.database.Tables.TXNOUT;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import static jooq.database.Tables.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+
+import jooq.database.tables.records.BlockRecord;
+import jooq.database.tables.records.TxnRecord;
+import jooq.database.tables.records.TxninRecord;
+import jooq.database.tables.records.TxnoutRecord;
+
+import org.bitcoinj.core.Block;
+import org.bitcoinj.core.BlockChain;
+import org.bitcoinj.core.NetworkParameters;
+import org.bitcoinj.core.Peer;
+import org.bitcoinj.core.ScriptException;
+import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionInput;
+import org.bitcoinj.core.TransactionOutput;
+import org.bitcoinj.kits.WalletAppKit;
+import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.store.BlockStore;
+import org.bitcoinj.store.BlockStoreException;
+import org.bitcoinj.utils.BriefLogFormatter;
+import org.jooq.DSLContext;
+import org.jooq.InsertValuesStep4;
+import org.jooq.InsertValuesStep5;
+import org.jooq.InsertValuesStep6;
+import org.jooq.Result;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DSL;
+
+import com.google.common.util.concurrent.Service;
 
 /**
  * Created by nanne on 26/02/16.
@@ -53,96 +71,101 @@ public class Download {
             DSLContext create = DSL.using(conn, SQLDialect.POSTGRES_9_5);
 
             for (int i = 0; i < 100; i++) {
-                Result<BlockRecord> fetch = create.insertInto(BLOCK, BLOCK.HASHMERKLEROOT, BLOCK.TXN_COUNTER)
-                        .values(b.getHashAsString(), b.getTransactions().size())
-                        .returning(BLOCK.BLOCK_ID)
-                        .fetch();
-                Integer block_id = fetch.get(0).getValue(BLOCK.BLOCK_ID);
-
-                create.insertInto(BLOCKHEADER,
-                        BLOCKHEADER.ID,
-                        BLOCKHEADER.NVERSION,
-                        BLOCKHEADER.HASHPREVBLOCK,
-                        BLOCKHEADER.HASHMERKLEROOT,
-                        BLOCKHEADER.NTIME,
-                        BLOCKHEADER.NBITS,
-                        BLOCKHEADER.NONCE
-                ).values(block_id,
-                        (short)b.getVersion(),
-                        b.getPrevBlockHash().toString(),
-                        b.getHashAsString(),
-                        new Timestamp(b.getTimeSeconds() * 1000),
-                        b.getDifficultyTarget(),
-                        b.getNonce()).execute();
-
-
-                InsertValuesStep5<TxnRecord, Short, Short, Short, Timestamp, Integer> into = create.insertInto(
-                        TXN, TXN.NVERSION, TXN.INCOUNTER, TXN.OUTCOUNTER, TXN.LOCK_TIME, TXN.BLOCK_ID);
-
-                List<Transaction> list = b.getTransactions();
-                assert list != null;
-
-
-                for (Transaction t : list) {
-                    Result<TxnRecord> result = into.values((short) t.getVersion(), (short) t.getInputs().size(), (short) t.getOutputs().size(), new Timestamp(t.getLockTime() * 1000), block_id)
-                            .returning(TXN.TXN_ID)
-                            .fetch();
-                    Integer txn_id = result.get(0).getValue(TXN.TXN_ID);
-
-                    InsertValuesStep4<TxnoutRecord, Long, Short, String, Integer> insert_txout = create.insertInto(
-                            TXNOUT, TXNOUT.VALUE, TXNOUT.SCRIPTLEN, TXNOUT.SCRIPTPUBKEY, TXNOUT.TXN_ID);
-
-                    Map<Integer, Integer> map = new HashMap<>();
-                    for (TransactionOutput tout : t.getOutputs()) {
-                        short length = 0;
-                        String script = "";
-                        try {
-                            length = (short) tout.getScriptBytes().length;
-                            script = tout.getScriptPubKey().toString();
-                        } catch (ScriptException ignored) {
-
-                        }
-                        Integer txnId = insert_txout.values(tout.getValue().getValue(),
-                                length,
-                                script,
-                                txn_id).returning(TXNOUT.ID).fetchOne().getTxnId();
-                        map.put(tout.getIndex(), txnId);
-                    }
-
-                    InsertValuesStep6<TxninRecord, String, Integer, Short, String, Short, Integer> insert_txin = create.insertInto(
-                            TXNIN, TXNIN.HASHPREVTXN, TXNIN.TXNOUT_ID, TXNIN.SCRIPTLEN, TXNIN.SCRIPTSIG, TXNIN.SEQNO, TXNIN.TXN_ID);
-
-                    String prev = "";
-                    for (TransactionInput tin : t.getInputs()) {
-                        TransactionOutput output = tin.getConnectedOutput();
-                        Integer txnOut_id = null;
-                        if (output != null) {
-                            txnOut_id = map.get(output.getIndex());
-                        }
-
-                        short length = 0;
-                        String script = "";
-                        try {
-                            length = (short) tin.getScriptBytes().length;
-                            script = tin.getScriptSig().toString();
-                        } catch (ScriptException ignored) {
-
-                        }
-                        insert_txin.values(
-                                prev,
-                                txnOut_id,
-                                length,
-                                script,
-                                (short)tin.getSequenceNumber(),
-                                txn_id).execute();
-                        try {
-                            prev = tin.getHash().toString();
-                        } catch(UnsupportedOperationException ignored) {
-                            prev = "";
-                        }
-                    }
-                }
-
+            	
+            	try {
+            		
+	                Result<BlockRecord> fetch = create.insertInto(BLOCK, BLOCK.HASHMERKLEROOT, BLOCK.TXN_COUNTER)
+	                        .values(b.getHashAsString(), b.getTransactions().size())
+	                        .returning(BLOCK.BLOCK_ID)
+	                        .fetch();
+	                Integer block_id = fetch.get(0).getValue(BLOCK.BLOCK_ID);
+	
+	                create.insertInto(BLOCKHEADER,
+	                        BLOCKHEADER.ID,
+	                        BLOCKHEADER.NVERSION,
+	                        BLOCKHEADER.HASHPREVBLOCK,
+	                        BLOCKHEADER.HASHMERKLEROOT,
+	                        BLOCKHEADER.NTIME,
+	                        BLOCKHEADER.NBITS,
+	                        BLOCKHEADER.NONCE
+	                ).values(block_id,
+	                        (short)b.getVersion(),
+	                        b.getPrevBlockHash().toString(),
+	                        b.getHashAsString(),
+	                        new Timestamp(b.getTimeSeconds() * 1000),
+	                        b.getDifficultyTarget(),
+	                        b.getNonce()).execute();
+	
+	
+	                InsertValuesStep5<TxnRecord, Short, Short, Short, Timestamp, Integer> into = create.insertInto(
+	                        TXN, TXN.NVERSION, TXN.INCOUNTER, TXN.OUTCOUNTER, TXN.LOCK_TIME, TXN.BLOCK_ID);
+	
+	                List<Transaction> list = b.getTransactions();
+	                assert list != null;
+	
+	
+	                for (Transaction t : list) {
+	                    Result<TxnRecord> result = into.values((short) t.getVersion(), (short) t.getInputs().size(), (short) t.getOutputs().size(), new Timestamp(t.getLockTime() * 1000), block_id)
+	                            .returning(TXN.TXN_ID)
+	                            .fetch();
+	                    Integer txn_id = result.get(0).getValue(TXN.TXN_ID);
+	
+	                    InsertValuesStep4<TxnoutRecord, Long, Short, String, Integer> insert_txout = create.insertInto(
+	                            TXNOUT, TXNOUT.VALUE, TXNOUT.SCRIPTLEN, TXNOUT.SCRIPTPUBKEY, TXNOUT.TXN_ID);
+	
+	                    Map<Integer, Integer> map = new HashMap<>();
+	                    for (TransactionOutput tout : t.getOutputs()) {
+	                        short length = 0;
+	                        String script = "";
+	                        try {
+	                            length = (short) tout.getScriptBytes().length;
+	                            script = tout.getScriptPubKey().toString();
+	                        } catch (ScriptException ignored) {
+	
+	                        }
+	                        Integer txnId = insert_txout.values(tout.getValue().getValue(),
+	                                length,
+	                                script,
+	                                txn_id).returning(TXNOUT.ID).fetchOne().getTxnId();
+	                        map.put(tout.getIndex(), txnId);
+	                    }
+	
+	                    InsertValuesStep6<TxninRecord, String, Integer, Short, String, Short, Integer> insert_txin = create.insertInto(
+	                            TXNIN, TXNIN.HASHPREVTXN, TXNIN.TXNOUT_ID, TXNIN.SCRIPTLEN, TXNIN.SCRIPTSIG, TXNIN.SEQNO, TXNIN.TXN_ID);
+	
+	                    String prev = "";
+	                    for (TransactionInput tin : t.getInputs()) {
+	                        TransactionOutput output = tin.getConnectedOutput();
+	                        Integer txnOut_id = null;
+	                        if (output != null) {
+	                            txnOut_id = map.get(output.getIndex());
+	                        }
+	
+	                        short length = 0;
+	                        String script = "";
+	                        try {
+	                            length = (short) tin.getScriptBytes().length;
+	                            script = tin.getScriptSig().toString();
+	                        } catch (ScriptException ignored) {
+	
+	                        }
+	                        insert_txin.values(
+	                                prev,
+	                                txnOut_id,
+	                                length,
+	                                script,
+	                                (short)tin.getSequenceNumber(),
+	                                txn_id).execute();
+	                        try {
+	                            prev = tin.getHash().toString();
+	                        } catch(UnsupportedOperationException ignored) {
+	                            prev = "";
+	                        }
+	                    }
+	                }
+            	} catch (Exception e) {
+            		e.printStackTrace();
+            	}
 
                 b = peer.getBlock(b.getPrevBlockHash()).get();
             }
