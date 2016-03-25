@@ -9,13 +9,9 @@ import javax.annotation.Generated;
 import jooq.database.tables.Block;
 import jooq.database.tables.Blockheader;
 import jooq.database.tables.Txn;
-import jooq.database.tables.Txnin;
-import jooq.database.tables.Txnout;
 import jooq.database.tables.records.BlockRecord;
 import jooq.database.tables.records.BlockheaderRecord;
 import jooq.database.tables.records.TxnRecord;
-import jooq.database.tables.records.TxninRecord;
-import jooq.database.tables.records.TxnoutRecord;
 
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
@@ -44,8 +40,6 @@ public class Keys {
 	public static final Identity<BlockRecord, Integer> IDENTITY_BLOCK = Identities0.IDENTITY_BLOCK;
 	public static final Identity<BlockheaderRecord, Integer> IDENTITY_BLOCKHEADER = Identities0.IDENTITY_BLOCKHEADER;
 	public static final Identity<TxnRecord, Integer> IDENTITY_TXN = Identities0.IDENTITY_TXN;
-	public static final Identity<TxninRecord, Integer> IDENTITY_TXNIN = Identities0.IDENTITY_TXNIN;
-	public static final Identity<TxnoutRecord, Integer> IDENTITY_TXNOUT = Identities0.IDENTITY_TXNOUT;
 
 	// -------------------------------------------------------------------------
 	// UNIQUE and PRIMARY KEY definitions
@@ -55,18 +49,12 @@ public class Keys {
 	public static final UniqueKey<BlockRecord> BLOCK_HASHMERKLEROOT_KEY = UniqueKeys0.BLOCK_HASHMERKLEROOT_KEY;
 	public static final UniqueKey<BlockheaderRecord> BLOCKHEADER_PKEY = UniqueKeys0.BLOCKHEADER_PKEY;
 	public static final UniqueKey<TxnRecord> TXN_PKEY = UniqueKeys0.TXN_PKEY;
-	public static final UniqueKey<TxninRecord> TXNIN_PKEY = UniqueKeys0.TXNIN_PKEY;
-	public static final UniqueKey<TxnoutRecord> TXNOUT_PKEY = UniqueKeys0.TXNOUT_PKEY;
 
 	// -------------------------------------------------------------------------
 	// FOREIGN KEY definitions
 	// -------------------------------------------------------------------------
 
 	public static final ForeignKey<BlockheaderRecord, BlockRecord> BLOCKHEADER__BLOCKHEADER_ID_FKEY = ForeignKeys0.BLOCKHEADER__BLOCKHEADER_ID_FKEY;
-	public static final ForeignKey<TxnRecord, BlockRecord> TXN__TXN_BLOCK_ID_FKEY = ForeignKeys0.TXN__TXN_BLOCK_ID_FKEY;
-	public static final ForeignKey<TxninRecord, TxnoutRecord> TXNIN__TXNIN_TXNOUT_ID_FKEY = ForeignKeys0.TXNIN__TXNIN_TXNOUT_ID_FKEY;
-	public static final ForeignKey<TxninRecord, TxnRecord> TXNIN__TXNIN_TXN_ID_FKEY = ForeignKeys0.TXNIN__TXNIN_TXN_ID_FKEY;
-	public static final ForeignKey<TxnoutRecord, TxnRecord> TXNOUT__TXNOUT_TXN_ID_FKEY = ForeignKeys0.TXNOUT__TXNOUT_TXN_ID_FKEY;
 
 	// -------------------------------------------------------------------------
 	// [#1459] distribute members to avoid static initialisers > 64kb
@@ -75,25 +63,17 @@ public class Keys {
 	private static class Identities0 extends AbstractKeys {
 		public static Identity<BlockRecord, Integer> IDENTITY_BLOCK = createIdentity(Block.BLOCK, Block.BLOCK.BLOCK_ID);
 		public static Identity<BlockheaderRecord, Integer> IDENTITY_BLOCKHEADER = createIdentity(Blockheader.BLOCKHEADER, Blockheader.BLOCKHEADER.ID);
-		public static Identity<TxnRecord, Integer> IDENTITY_TXN = createIdentity(Txn.TXN, Txn.TXN.TXN_ID);
-		public static Identity<TxninRecord, Integer> IDENTITY_TXNIN = createIdentity(Txnin.TXNIN, Txnin.TXNIN.ID);
-		public static Identity<TxnoutRecord, Integer> IDENTITY_TXNOUT = createIdentity(Txnout.TXNOUT, Txnout.TXNOUT.ID);
+		public static Identity<TxnRecord, Integer> IDENTITY_TXN = createIdentity(Txn.TXN, Txn.TXN.ID);
 	}
 
 	private static class UniqueKeys0 extends AbstractKeys {
 		public static final UniqueKey<BlockRecord> BLOCK_PKEY = createUniqueKey(Block.BLOCK, Block.BLOCK.BLOCK_ID);
 		public static final UniqueKey<BlockRecord> BLOCK_HASHMERKLEROOT_KEY = createUniqueKey(Block.BLOCK, Block.BLOCK.HASHMERKLEROOT);
 		public static final UniqueKey<BlockheaderRecord> BLOCKHEADER_PKEY = createUniqueKey(Blockheader.BLOCKHEADER, Blockheader.BLOCKHEADER.ID);
-		public static final UniqueKey<TxnRecord> TXN_PKEY = createUniqueKey(Txn.TXN, Txn.TXN.TXN_ID);
-		public static final UniqueKey<TxninRecord> TXNIN_PKEY = createUniqueKey(Txnin.TXNIN, Txnin.TXNIN.ID);
-		public static final UniqueKey<TxnoutRecord> TXNOUT_PKEY = createUniqueKey(Txnout.TXNOUT, Txnout.TXNOUT.ID);
+		public static final UniqueKey<TxnRecord> TXN_PKEY = createUniqueKey(Txn.TXN, Txn.TXN.ID);
 	}
 
 	private static class ForeignKeys0 extends AbstractKeys {
 		public static final ForeignKey<BlockheaderRecord, BlockRecord> BLOCKHEADER__BLOCKHEADER_ID_FKEY = createForeignKey(jooq.database.Keys.BLOCK_PKEY, Blockheader.BLOCKHEADER, Blockheader.BLOCKHEADER.ID);
-		public static final ForeignKey<TxnRecord, BlockRecord> TXN__TXN_BLOCK_ID_FKEY = createForeignKey(jooq.database.Keys.BLOCK_PKEY, Txn.TXN, Txn.TXN.BLOCK_ID);
-		public static final ForeignKey<TxninRecord, TxnoutRecord> TXNIN__TXNIN_TXNOUT_ID_FKEY = createForeignKey(jooq.database.Keys.TXNOUT_PKEY, Txnin.TXNIN, Txnin.TXNIN.TXNOUT_ID);
-		public static final ForeignKey<TxninRecord, TxnRecord> TXNIN__TXNIN_TXN_ID_FKEY = createForeignKey(jooq.database.Keys.TXN_PKEY, Txnin.TXNIN, Txnin.TXNIN.TXN_ID);
-		public static final ForeignKey<TxnoutRecord, TxnRecord> TXNOUT__TXNOUT_TXN_ID_FKEY = createForeignKey(jooq.database.Keys.TXN_PKEY, Txnout.TXNOUT, Txnout.TXNOUT.TXN_ID);
 	}
 }

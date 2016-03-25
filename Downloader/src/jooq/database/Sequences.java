@@ -34,37 +34,7 @@ public class Sequences {
 	public static final Sequence<Long> BLOCK_BLOCK_ID_SEQ = new SequenceImpl<Long>("Block_block_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
 	/**
-	 * The sequence <code>public.TxnIn_id_seq</code>
+	 * The sequence <code>public.Txn_id_seq</code>
 	 */
-	public static final Sequence<Long> TXNIN_ID_SEQ = new SequenceImpl<Long>("TxnIn_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-	/**
-	 * The sequence <code>public.TxnIn_txnOut_id_seq</code>
-	 */
-	public static final Sequence<Long> TXNIN_TXNOUT_ID_SEQ = new SequenceImpl<Long>("TxnIn_txnOut_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-	/**
-	 * The sequence <code>public.TxnIn_txn_id_seq</code>
-	 */
-	public static final Sequence<Long> TXNIN_TXN_ID_SEQ = new SequenceImpl<Long>("TxnIn_txn_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-	/**
-	 * The sequence <code>public.TxnOut_id_seq</code>
-	 */
-	public static final Sequence<Long> TXNOUT_ID_SEQ = new SequenceImpl<Long>("TxnOut_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-	/**
-	 * The sequence <code>public.TxnOut_txn_id_seq</code>
-	 */
-	public static final Sequence<Long> TXNOUT_TXN_ID_SEQ = new SequenceImpl<Long>("TxnOut_txn_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-	/**
-	 * The sequence <code>public.Txn_block_id_seq</code>
-	 */
-	public static final Sequence<Long> TXN_BLOCK_ID_SEQ = new SequenceImpl<Long>("Txn_block_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-	/**
-	 * The sequence <code>public.Txn_txn_id_seq</code>
-	 */
-	public static final Sequence<Long> TXN_TXN_ID_SEQ = new SequenceImpl<Long>("Txn_txn_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+	public static final Sequence<Long> TXN_ID_SEQ = new SequenceImpl<Long>("Txn_id_seq", Public.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 }

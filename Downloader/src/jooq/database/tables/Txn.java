@@ -4,7 +4,6 @@
 package jooq.database.tables;
 
 
-import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,7 +14,6 @@ import jooq.database.Public;
 import jooq.database.tables.records.TxnRecord;
 
 import org.jooq.Field;
-import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -36,7 +34,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Txn extends TableImpl<TxnRecord> {
 
-	private static final long serialVersionUID = -996893543;
+	private static final long serialVersionUID = 578123891;
 
 	/**
 	 * The reference instance of <code>public.Txn</code>
@@ -52,34 +50,19 @@ public class Txn extends TableImpl<TxnRecord> {
 	}
 
 	/**
-	 * The column <code>public.Txn.txn_id</code>.
+	 * The column <code>public.Txn.hash</code>.
 	 */
-	public final TableField<TxnRecord, Integer> TXN_ID = createField("txn_id", org.jooq.impl.SQLDataType.INTEGER.nullable(false).defaulted(true), this, "");
-
-	/**
-	 * The column <code>public.Txn.nVersion</code>.
-	 */
-	public final TableField<TxnRecord, Short> NVERSION = createField("nVersion", org.jooq.impl.SQLDataType.SMALLINT, this, "");
-
-	/**
-	 * The column <code>public.Txn.inCounter</code>.
-	 */
-	public final TableField<TxnRecord, Short> INCOUNTER = createField("inCounter", org.jooq.impl.SQLDataType.SMALLINT, this, "");
-
-	/**
-	 * The column <code>public.Txn.outCounter</code>.
-	 */
-	public final TableField<TxnRecord, Short> OUTCOUNTER = createField("outCounter", org.jooq.impl.SQLDataType.SMALLINT, this, "");
-
-	/**
-	 * The column <code>public.Txn.lock_time</code>.
-	 */
-	public final TableField<TxnRecord, Timestamp> LOCK_TIME = createField("lock_time", org.jooq.impl.SQLDataType.TIMESTAMP, this, "");
+	public final TableField<TxnRecord, String> HASH = createField("hash", org.jooq.impl.SQLDataType.VARCHAR.length(255), this, "");
 
 	/**
 	 * The column <code>public.Txn.block_id</code>.
 	 */
-	public final TableField<TxnRecord, Integer> BLOCK_ID = createField("block_id", org.jooq.impl.SQLDataType.INTEGER.nullable(false).defaulted(true), this, "");
+	public final TableField<TxnRecord, Integer> BLOCK_ID = createField("block_id", org.jooq.impl.SQLDataType.INTEGER, this, "");
+
+	/**
+	 * The column <code>public.Txn.id</code>.
+	 */
+	public final TableField<TxnRecord, Integer> ID = createField("id", org.jooq.impl.SQLDataType.INTEGER.nullable(false).defaulted(true), this, "");
 
 	/**
 	 * Create a <code>public.Txn</code> table reference
@@ -125,14 +108,6 @@ public class Txn extends TableImpl<TxnRecord> {
 	@Override
 	public List<UniqueKey<TxnRecord>> getKeys() {
 		return Arrays.<UniqueKey<TxnRecord>>asList(Keys.TXN_PKEY);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public List<ForeignKey<TxnRecord, ?>> getReferences() {
-		return Arrays.<ForeignKey<TxnRecord, ?>>asList(Keys.TXN__TXN_BLOCK_ID_FKEY);
 	}
 
 	/**

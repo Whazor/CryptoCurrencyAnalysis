@@ -11,5 +11,6 @@
     <orderEntry type="library" name="org.apache.flink:flink-clients_2.11:1.0.0" level="project" />
     <orderEntry type="library" name="org.apache.flink:flink-jdbc:1.0.0" level="project" />
     <orderEntry type="library" name="org.postgresql:postgresql:9.4.1208.jre7" level="project" />
+    <orderEntry type="library" name="org.apache.flink:flink-gelly_2.11:1.0.0" level="project" />
   </component>
 </module>

@@ -4,21 +4,14 @@
 package jooq.database.tables;
 
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.annotation.Generated;
 
-import jooq.database.Keys;
 import jooq.database.Public;
 import jooq.database.tables.records.TxnoutRecord;
 
 import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
 import org.jooq.Table;
 import org.jooq.TableField;
-import org.jooq.UniqueKey;
 import org.jooq.impl.TableImpl;
 
 
@@ -35,7 +28,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Txnout extends TableImpl<TxnoutRecord> {
 
-	private static final long serialVersionUID = -838254059;
+	private static final long serialVersionUID = -493938865;
 
 	/**
 	 * The reference instance of <code>public.TxnOut</code>
@@ -51,29 +44,14 @@ public class Txnout extends TableImpl<TxnoutRecord> {
 	}
 
 	/**
-	 * The column <code>public.TxnOut.id</code>.
+	 * The column <code>public.TxnOut.address</code>.
 	 */
-	public final TableField<TxnoutRecord, Integer> ID = createField("id", org.jooq.impl.SQLDataType.INTEGER.nullable(false).defaulted(true), this, "");
-
-	/**
-	 * The column <code>public.TxnOut.value</code>.
-	 */
-	public final TableField<TxnoutRecord, Long> VALUE = createField("value", org.jooq.impl.SQLDataType.BIGINT, this, "");
-
-	/**
-	 * The column <code>public.TxnOut.scriptLen</code>.
-	 */
-	public final TableField<TxnoutRecord, Short> SCRIPTLEN = createField("scriptLen", org.jooq.impl.SQLDataType.SMALLINT, this, "");
-
-	/**
-	 * The column <code>public.TxnOut.scriptPubKey</code>.
-	 */
-	public final TableField<TxnoutRecord, String> SCRIPTPUBKEY = createField("scriptPubKey", org.jooq.impl.SQLDataType.VARCHAR.length(255), this, "");
+	public final TableField<TxnoutRecord, String> ADDRESS = createField("address", org.jooq.impl.SQLDataType.VARCHAR.length(255), this, "");
 
 	/**
 	 * The column <code>public.TxnOut.txn_id</code>.
 	 */
-	public final TableField<TxnoutRecord, Integer> TXN_ID = createField("txn_id", org.jooq.impl.SQLDataType.INTEGER.nullable(false).defaulted(true), this, "");
+	public final TableField<TxnoutRecord, Integer> TXN_ID = createField("txn_id", org.jooq.impl.SQLDataType.INTEGER, this, "");
 
 	/**
 	 * Create a <code>public.TxnOut</code> table reference
@@ -95,38 +73,6 @@ public class Txnout extends TableImpl<TxnoutRecord> {
 
 	private Txnout(String alias, Table<TxnoutRecord> aliased, Field<?>[] parameters) {
 		super(alias, Public.PUBLIC, aliased, parameters, "");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Identity<TxnoutRecord, Integer> getIdentity() {
-		return Keys.IDENTITY_TXNOUT;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public UniqueKey<TxnoutRecord> getPrimaryKey() {
-		return Keys.TXNOUT_PKEY;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public List<UniqueKey<TxnoutRecord>> getKeys() {
-		return Arrays.<UniqueKey<TxnoutRecord>>asList(Keys.TXNOUT_PKEY);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public List<ForeignKey<TxnoutRecord, ?>> getReferences() {
-		return Arrays.<ForeignKey<TxnoutRecord, ?>>asList(Keys.TXNOUT__TXNOUT_TXN_ID_FKEY);
 	}
 
 	/**

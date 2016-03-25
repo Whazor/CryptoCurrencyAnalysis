@@ -1,8 +1,5 @@
 import com.google.common.util.concurrent.Service;
-import jooq.database.tables.records.BlockRecord;
-import jooq.database.tables.records.TxnRecord;
-import jooq.database.tables.records.TxninRecord;
-import jooq.database.tables.records.TxnoutRecord;
+import jooq.database.tables.records.*;
 import org.bitcoinj.core.*;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.kits.WalletAppKit;
@@ -17,6 +14,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,69 +75,37 @@ public class Download {
 							b.getNonce()).execute();
 
 
-					InsertValuesStep5<TxnRecord, Short, Short, Short, Timestamp, Integer> into = create.insertInto(
-							TXN, TXN.NVERSION, TXN.INCOUNTER, TXN.OUTCOUNTER, TXN.LOCK_TIME, TXN.BLOCK_ID);
+//					InsertValuesStep5<TxnRecord, Short, Short, Short, Timestamp, Integer> into = create.insertInto(
+//							TXN, TXN.NVERSION, TXN.INCOUNTER, TXN.OUTCOUNTER, TXN.LOCK_TIME, TXN.BLOCK_ID);
 
 					List<Transaction> list = b.getTransactions();
 					assert list != null;
 
 
 					for (Transaction t : list) {
-						Result<TxnRecord> result = into.values((short) t.getVersion(), (short) t.getInputs().size(), (short) t.getOutputs().size(), new Timestamp(t.getLockTime() * 1000), block_id)
-								.returning(TXN.TXN_ID)
-								.fetch();
-						Integer txn_id = result.get(0).getValue(TXN.TXN_ID);
+						Integer txn_id = create.insertInto(TXN, TXN.HASH, TXN.BLOCK_ID).values(t.getHashAsString(), block_id)
+								.returning(TXN.ID)
+								.fetchOne().getValue(TXN.ID);
 
-						InsertValuesStep3<TxnoutRecord, Long, Short, Integer> insert_txout = create.insertInto(
-								TXNOUT, TXNOUT.VALUE, TXNOUT.SCRIPTLEN, TXNOUT.TXN_ID);
-
-						Map<Integer, Integer> map = new HashMap<>();
-						for (TransactionOutput tout : t.getOutputs()) {
-							short length = 0;
-							String script = "";
-							try {
-								length = (short) tout.getScriptBytes().length;
-							} catch (ScriptException ignored) {
-
-							}
-							Integer txnId = insert_txout.values(tout.getValue().getValue(),
-									length,
-									txn_id).returning(TXNOUT.ID).fetchOne().getTxnId();
-							map.put(tout.getIndex(), txnId);
-						}
-
-						InsertValuesStep5<TxninRecord, String, Integer, Short, Short, Integer> insert_txin = create.insertInto(
-								TXNIN, TXNIN.HASHPREVTXN, TXNIN.TXNOUT_ID, TXNIN.SCRIPTLEN, TXNIN.SEQNO, TXNIN.TXN_ID);
-
-						String prev = "";
 						for (TransactionInput tin : t.getInputs()) {
-							TransactionOutput output = tin.getConnectedOutput();
-							Integer txnOut_id = null;
-							if (output != null) {
-								txnOut_id = map.get(output.getIndex());
-							}
-
-							short length = 0;
-							String script = "";
 							try {
-								length = (short) tin.getScriptBytes().length;
-//                            script = tin.getScriptSig().toString();
-							} catch (ScriptException ignored) {
-
-							}
-							insert_txin.values(
-									prev,
-									txnOut_id,
-									length,
-//                                script,
-									(short)tin.getSequenceNumber(),
-									txn_id).execute();
-							try {
-								prev = tin.getHash().toString();
-							} catch(UnsupportedOperationException ignored) {
-								prev = "";
-							}
+								String from = tin.getFromAddress().toString();
+								create.insertInto(TXNIN, TXNIN.TXN_ID, TXNIN.ADDRESS).values(txn_id, from).execute();
+							} catch (ScriptException ignored) {}
 						}
+
+						for (TransactionOutput tout : t.getOutputs()) {
+							Address address = tout.getAddressFromP2PKHScript(params);
+
+							if(address != null) {
+								String to = address.toString();
+								create.insertInto(TXNOUT, TXNOUT.TXN_ID, TXNOUT.ADDRESS).values(txn_id, to).execute();
+							}
+
+//									InsertValuesStep3<TransactionRecord, String, String, Integer> insertInto = create.insertInto(TRANSACTION, TRANSACTION.FROM_ADDRESS, TRANSACTION.TO_ADDRESS, TRANSACTION.BLOCK_ID);
+//									insertInto.values(from, to, block_id).execute();
+						}
+
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

@@ -4,21 +4,14 @@
 package jooq.database.tables;
 
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.annotation.Generated;
 
-import jooq.database.Keys;
 import jooq.database.Public;
 import jooq.database.tables.records.TxninRecord;
 
 import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
 import org.jooq.Table;
 import org.jooq.TableField;
-import org.jooq.UniqueKey;
 import org.jooq.impl.TableImpl;
 
 
@@ -35,7 +28,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Txnin extends TableImpl<TxninRecord> {
 
-	private static final long serialVersionUID = -581642883;
+	private static final long serialVersionUID = -70395366;
 
 	/**
 	 * The reference instance of <code>public.TxnIn</code>
@@ -51,39 +44,14 @@ public class Txnin extends TableImpl<TxninRecord> {
 	}
 
 	/**
-	 * The column <code>public.TxnIn.id</code>.
+	 * The column <code>public.TxnIn.address</code>.
 	 */
-	public final TableField<TxninRecord, Integer> ID = createField("id", org.jooq.impl.SQLDataType.INTEGER.nullable(false).defaulted(true), this, "");
-
-	/**
-	 * The column <code>public.TxnIn.hashPrevTxn</code>.
-	 */
-	public final TableField<TxninRecord, String> HASHPREVTXN = createField("hashPrevTxn", org.jooq.impl.SQLDataType.VARCHAR.length(255), this, "");
-
-	/**
-	 * The column <code>public.TxnIn.txnOut_id</code>.
-	 */
-	public final TableField<TxninRecord, Integer> TXNOUT_ID = createField("txnOut_id", org.jooq.impl.SQLDataType.INTEGER.nullable(false).defaulted(true), this, "");
-
-	/**
-	 * The column <code>public.TxnIn.scriptLen</code>.
-	 */
-	public final TableField<TxninRecord, Short> SCRIPTLEN = createField("scriptLen", org.jooq.impl.SQLDataType.SMALLINT, this, "");
-
-	/**
-	 * The column <code>public.TxnIn.scriptSig</code>.
-	 */
-	public final TableField<TxninRecord, String> SCRIPTSIG = createField("scriptSig", org.jooq.impl.SQLDataType.VARCHAR.length(255), this, "");
-
-	/**
-	 * The column <code>public.TxnIn.seqNo</code>.
-	 */
-	public final TableField<TxninRecord, Short> SEQNO = createField("seqNo", org.jooq.impl.SQLDataType.SMALLINT, this, "");
+	public final TableField<TxninRecord, String> ADDRESS = createField("address", org.jooq.impl.SQLDataType.VARCHAR.length(255), this, "");
 
 	/**
 	 * The column <code>public.TxnIn.txn_id</code>.
 	 */
-	public final TableField<TxninRecord, Integer> TXN_ID = createField("txn_id", org.jooq.impl.SQLDataType.INTEGER.nullable(false).defaulted(true), this, "");
+	public final TableField<TxninRecord, Integer> TXN_ID = createField("txn_id", org.jooq.impl.SQLDataType.INTEGER, this, "");
 
 	/**
 	 * Create a <code>public.TxnIn</code> table reference
@@ -105,38 +73,6 @@ public class Txnin extends TableImpl<TxninRecord> {
 
 	private Txnin(String alias, Table<TxninRecord> aliased, Field<?>[] parameters) {
 		super(alias, Public.PUBLIC, aliased, parameters, "");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Identity<TxninRecord, Integer> getIdentity() {
-		return Keys.IDENTITY_TXNIN;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public UniqueKey<TxninRecord> getPrimaryKey() {
-		return Keys.TXNIN_PKEY;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public List<UniqueKey<TxninRecord>> getKeys() {
-		return Arrays.<UniqueKey<TxninRecord>>asList(Keys.TXNIN_PKEY);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public List<ForeignKey<TxninRecord, ?>> getReferences() {
-		return Arrays.<ForeignKey<TxninRecord, ?>>asList(Keys.TXNIN__TXNIN_TXNOUT_ID_FKEY, Keys.TXNIN__TXNIN_TXN_ID_FKEY);
 	}
 
 	/**
