@@ -89,8 +89,8 @@ public class Download {
                             .fetch();
                     Integer txn_id = result.get(0).getValue(TXN.TXN_ID);
 
-                    InsertValuesStep4<TxnoutRecord, Long, Short, String, Integer> insert_txout = create.insertInto(
-                            TXNOUT, TXNOUT.VALUE, TXNOUT.SCRIPTLEN, TXNOUT.SCRIPTPUBKEY, TXNOUT.TXN_ID);
+                    InsertValuesStep3<TxnoutRecord, Long, Short, Integer> insert_txout = create.insertInto(
+                            TXNOUT, TXNOUT.VALUE, TXNOUT.SCRIPTLEN, TXNOUT.TXN_ID);
 
                     Map<Integer, Integer> map = new HashMap<>();
                     for (TransactionOutput tout : t.getOutputs()) {
@@ -98,19 +98,17 @@ public class Download {
                         String script = "";
                         try {
                             length = (short) tout.getScriptBytes().length;
-                            script = tout.getScriptPubKey().toString();
                         } catch (ScriptException ignored) {
 
                         }
                         Integer txnId = insert_txout.values(tout.getValue().getValue(),
                                 length,
-                                script,
                                 txn_id).returning(TXNOUT.ID).fetchOne().getTxnId();
                         map.put(tout.getIndex(), txnId);
                     }
 
-                    InsertValuesStep6<TxninRecord, String, Integer, Short, String, Short, Integer> insert_txin = create.insertInto(
-                            TXNIN, TXNIN.HASHPREVTXN, TXNIN.TXNOUT_ID, TXNIN.SCRIPTLEN, TXNIN.SCRIPTSIG, TXNIN.SEQNO, TXNIN.TXN_ID);
+                    InsertValuesStep5<TxninRecord, String, Integer, Short, Short, Integer> insert_txin = create.insertInto(
+                            TXNIN, TXNIN.HASHPREVTXN, TXNIN.TXNOUT_ID, TXNIN.SCRIPTLEN, TXNIN.SEQNO, TXNIN.TXN_ID);
 
                     String prev = "";
                     for (TransactionInput tin : t.getInputs()) {
@@ -124,7 +122,7 @@ public class Download {
                         String script = "";
                         try {
                             length = (short) tin.getScriptBytes().length;
-                            script = tin.getScriptSig().toString();
+//                            script = tin.getScriptSig().toString();
                         } catch (ScriptException ignored) {
 
                         }
@@ -132,7 +130,7 @@ public class Download {
                                 prev,
                                 txnOut_id,
                                 length,
-                                script,
+//                                script,
                                 (short)tin.getSequenceNumber(),
                                 txn_id).execute();
                         try {
