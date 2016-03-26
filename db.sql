@@ -10,14 +10,14 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
@@ -30,7 +30,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: Block; Type: TABLE; Schema: public; Owner: bitcoin; Tablespace: 
+-- Name: Block; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE "Block" (
@@ -40,10 +40,8 @@ CREATE TABLE "Block" (
 );
 
 
-ALTER TABLE "Block" OWNER TO bitcoin;
-
 --
--- Name: BlockHeader; Type: TABLE; Schema: public; Owner: bitcoin; Tablespace: 
+-- Name: BlockHeader; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE "BlockHeader" (
@@ -57,10 +55,8 @@ CREATE TABLE "BlockHeader" (
 );
 
 
-ALTER TABLE "BlockHeader" OWNER TO bitcoin;
-
 --
--- Name: BlockHeader_id_seq; Type: SEQUENCE; Schema: public; Owner: bitcoin
+-- Name: BlockHeader_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE "BlockHeader_id_seq"
@@ -71,17 +67,15 @@ CREATE SEQUENCE "BlockHeader_id_seq"
     CACHE 1;
 
 
-ALTER TABLE "BlockHeader_id_seq" OWNER TO bitcoin;
-
 --
--- Name: BlockHeader_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bitcoin
+-- Name: BlockHeader_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE "BlockHeader_id_seq" OWNED BY "BlockHeader".id;
 
 
 --
--- Name: Block_block_id_seq; Type: SEQUENCE; Schema: public; Owner: bitcoin
+-- Name: Block_block_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE "Block_block_id_seq"
@@ -92,131 +86,49 @@ CREATE SEQUENCE "Block_block_id_seq"
     CACHE 1;
 
 
-ALTER TABLE "Block_block_id_seq" OWNER TO bitcoin;
-
 --
--- Name: Block_block_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bitcoin
+-- Name: Block_block_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE "Block_block_id_seq" OWNED BY "Block".block_id;
 
 
 --
--- Name: Txn; Type: TABLE; Schema: public; Owner: bitcoin; Tablespace: 
+-- Name: Txn; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE "Txn" (
-    txn_id integer NOT NULL,
-    "nVersion" smallint,
-    "inCounter" smallint,
-    "outCounter" smallint,
-    lock_time timestamp without time zone,
-    block_id integer NOT NULL
+    hash character varying(255),
+    block_id integer,
+    id integer NOT NULL
 );
 
 
-ALTER TABLE "Txn" OWNER TO bitcoin;
-
 --
--- Name: TxnIn; Type: TABLE; Schema: public; Owner: bitcoin; Tablespace: 
+-- Name: TxnIn; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE "TxnIn" (
-    id integer NOT NULL,
-    "hashPrevTxn" character varying(255),
-    "txnOut_id" integer,
-    "scriptLen" smallint,
-    "scriptSig" text,
-    "seqNo" smallint,
-    txn_id integer NOT NULL
+    address character varying(255),
+    txn_id integer
 );
 
 
-ALTER TABLE "TxnIn" OWNER TO bitcoin;
-
 --
--- Name: TxnIn_id_seq; Type: SEQUENCE; Schema: public; Owner: bitcoin
---
-
-CREATE SEQUENCE "TxnIn_id_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE "TxnIn_id_seq" OWNER TO bitcoin;
-
---
--- Name: TxnIn_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bitcoin
---
-
-ALTER SEQUENCE "TxnIn_id_seq" OWNED BY "TxnIn".id;
-
-
---
--- Name: TxnIn_txnOut_id_seq; Type: SEQUENCE; Schema: public; Owner: bitcoin
---
-
-CREATE SEQUENCE "TxnIn_txnOut_id_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE "TxnIn_txnOut_id_seq" OWNER TO bitcoin;
-
---
--- Name: TxnIn_txnOut_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bitcoin
---
-
-ALTER SEQUENCE "TxnIn_txnOut_id_seq" OWNED BY "TxnIn"."txnOut_id";
-
-
---
--- Name: TxnIn_txn_id_seq; Type: SEQUENCE; Schema: public; Owner: bitcoin
---
-
-CREATE SEQUENCE "TxnIn_txn_id_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE "TxnIn_txn_id_seq" OWNER TO bitcoin;
-
---
--- Name: TxnIn_txn_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bitcoin
---
-
-ALTER SEQUENCE "TxnIn_txn_id_seq" OWNED BY "TxnIn".txn_id;
-
-
---
--- Name: TxnOut; Type: TABLE; Schema: public; Owner: bitcoin; Tablespace: 
+-- Name: TxnOut; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE "TxnOut" (
-    id integer NOT NULL,
-    value bigint,
-    "scriptLen" smallint,
-    "scriptPubKey" text,
-    txn_id integer NOT NULL
+    address character varying(255),
+    txn_id integer
 );
 
 
-ALTER TABLE "TxnOut" OWNER TO bitcoin;
-
 --
--- Name: TxnOut_id_seq; Type: SEQUENCE; Schema: public; Owner: bitcoin
+-- Name: Txn_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE "TxnOut_id_seq"
+CREATE SEQUENCE "Txn_id_seq"
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -224,143 +136,36 @@ CREATE SEQUENCE "TxnOut_id_seq"
     CACHE 1;
 
 
-ALTER TABLE "TxnOut_id_seq" OWNER TO bitcoin;
-
 --
--- Name: TxnOut_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bitcoin
+-- Name: Txn_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE "TxnOut_id_seq" OWNED BY "TxnOut".id;
+ALTER SEQUENCE "Txn_id_seq" OWNED BY "Txn".id;
 
 
 --
--- Name: TxnOut_txn_id_seq; Type: SEQUENCE; Schema: public; Owner: bitcoin
---
-
-CREATE SEQUENCE "TxnOut_txn_id_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE "TxnOut_txn_id_seq" OWNER TO bitcoin;
-
---
--- Name: TxnOut_txn_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bitcoin
---
-
-ALTER SEQUENCE "TxnOut_txn_id_seq" OWNED BY "TxnOut".txn_id;
-
-
---
--- Name: Txn_block_id_seq; Type: SEQUENCE; Schema: public; Owner: bitcoin
---
-
-CREATE SEQUENCE "Txn_block_id_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE "Txn_block_id_seq" OWNER TO bitcoin;
-
---
--- Name: Txn_block_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bitcoin
---
-
-ALTER SEQUENCE "Txn_block_id_seq" OWNED BY "Txn".block_id;
-
-
---
--- Name: Txn_txn_id_seq; Type: SEQUENCE; Schema: public; Owner: bitcoin
---
-
-CREATE SEQUENCE "Txn_txn_id_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE "Txn_txn_id_seq" OWNER TO bitcoin;
-
---
--- Name: Txn_txn_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bitcoin
---
-
-ALTER SEQUENCE "Txn_txn_id_seq" OWNED BY "Txn".txn_id;
-
-
---
--- Name: block_id; Type: DEFAULT; Schema: public; Owner: bitcoin
+-- Name: block_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY "Block" ALTER COLUMN block_id SET DEFAULT nextval('"Block_block_id_seq"'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: bitcoin
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY "BlockHeader" ALTER COLUMN id SET DEFAULT nextval('"BlockHeader_id_seq"'::regclass);
 
 
 --
--- Name: txn_id; Type: DEFAULT; Schema: public; Owner: bitcoin
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY "Txn" ALTER COLUMN txn_id SET DEFAULT nextval('"Txn_txn_id_seq"'::regclass);
-
-
---
--- Name: block_id; Type: DEFAULT; Schema: public; Owner: bitcoin
---
-
-ALTER TABLE ONLY "Txn" ALTER COLUMN block_id SET DEFAULT nextval('"Txn_block_id_seq"'::regclass);
+ALTER TABLE ONLY "Txn" ALTER COLUMN id SET DEFAULT nextval('"Txn_id_seq"'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: bitcoin
---
-
-ALTER TABLE ONLY "TxnIn" ALTER COLUMN id SET DEFAULT nextval('"TxnIn_id_seq"'::regclass);
-
-
---
--- Name: txnOut_id; Type: DEFAULT; Schema: public; Owner: bitcoin
---
-
-ALTER TABLE ONLY "TxnIn" ALTER COLUMN "txnOut_id" SET DEFAULT nextval('"TxnIn_txnOut_id_seq"'::regclass);
-
-
---
--- Name: txn_id; Type: DEFAULT; Schema: public; Owner: bitcoin
---
-
-ALTER TABLE ONLY "TxnIn" ALTER COLUMN txn_id SET DEFAULT nextval('"TxnIn_txn_id_seq"'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: bitcoin
---
-
-ALTER TABLE ONLY "TxnOut" ALTER COLUMN id SET DEFAULT nextval('"TxnOut_id_seq"'::regclass);
-
-
---
--- Name: txn_id; Type: DEFAULT; Schema: public; Owner: bitcoin
---
-
-ALTER TABLE ONLY "TxnOut" ALTER COLUMN txn_id SET DEFAULT nextval('"TxnOut_txn_id_seq"'::regclass);
-
-
---
--- Name: BlockHeader_pkey; Type: CONSTRAINT; Schema: public; Owner: bitcoin; Tablespace: 
+-- Name: BlockHeader_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY "BlockHeader"
@@ -368,7 +173,7 @@ ALTER TABLE ONLY "BlockHeader"
 
 
 --
--- Name: Block_hashMerkleRoot_key; Type: CONSTRAINT; Schema: public; Owner: bitcoin; Tablespace: 
+-- Name: Block_hashMerkleRoot_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY "Block"
@@ -376,7 +181,7 @@ ALTER TABLE ONLY "Block"
 
 
 --
--- Name: Block_pkey; Type: CONSTRAINT; Schema: public; Owner: bitcoin; Tablespace: 
+-- Name: Block_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY "Block"
@@ -384,31 +189,15 @@ ALTER TABLE ONLY "Block"
 
 
 --
--- Name: TxnIn_pkey; Type: CONSTRAINT; Schema: public; Owner: bitcoin; Tablespace: 
---
-
-ALTER TABLE ONLY "TxnIn"
-    ADD CONSTRAINT "TxnIn_pkey" PRIMARY KEY (id);
-
-
---
--- Name: TxnOut_pkey; Type: CONSTRAINT; Schema: public; Owner: bitcoin; Tablespace: 
---
-
-ALTER TABLE ONLY "TxnOut"
-    ADD CONSTRAINT "TxnOut_pkey" PRIMARY KEY (id);
-
-
---
--- Name: Txn_pkey; Type: CONSTRAINT; Schema: public; Owner: bitcoin; Tablespace: 
+-- Name: Txn_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY "Txn"
-    ADD CONSTRAINT "Txn_pkey" PRIMARY KEY (txn_id);
+    ADD CONSTRAINT "Txn_pkey" PRIMARY KEY (id);
 
 
 --
--- Name: BlockHeader_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bitcoin
+-- Name: BlockHeader_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY "BlockHeader"
@@ -416,45 +205,98 @@ ALTER TABLE ONLY "BlockHeader"
 
 
 --
--- Name: TxnIn_txnOut_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bitcoin
---
-
-ALTER TABLE ONLY "TxnIn"
-    ADD CONSTRAINT "TxnIn_txnOut_id_fkey" FOREIGN KEY ("txnOut_id") REFERENCES "TxnOut"(id);
-
-
---
--- Name: TxnIn_txn_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bitcoin
---
-
-ALTER TABLE ONLY "TxnIn"
-    ADD CONSTRAINT "TxnIn_txn_id_fkey" FOREIGN KEY (txn_id) REFERENCES "Txn"(txn_id);
-
-
---
--- Name: TxnOut_txn_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bitcoin
---
-
-ALTER TABLE ONLY "TxnOut"
-    ADD CONSTRAINT "TxnOut_txn_id_fkey" FOREIGN KEY (txn_id) REFERENCES "Txn"(txn_id);
-
-
---
--- Name: Txn_block_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bitcoin
---
-
-ALTER TABLE ONLY "Txn"
-    ADD CONSTRAINT "Txn_block_id_fkey" FOREIGN KEY (block_id) REFERENCES "Block"(block_id);
-
-
---
--- Name: public; Type: ACL; Schema: -; Owner: nanne
+-- Name: public; Type: ACL; Schema: -; Owner: -
 --
 
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
 REVOKE ALL ON SCHEMA public FROM nanne;
 GRANT ALL ON SCHEMA public TO nanne;
 GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- Name: Block; Type: ACL; Schema: public; Owner: -
+--
+
+REVOKE ALL ON TABLE "Block" FROM PUBLIC;
+REVOKE ALL ON TABLE "Block" FROM bitcoin;
+GRANT ALL ON TABLE "Block" TO bitcoin;
+
+
+--
+-- Name: BlockHeader; Type: ACL; Schema: public; Owner: -
+--
+
+REVOKE ALL ON TABLE "BlockHeader" FROM PUBLIC;
+REVOKE ALL ON TABLE "BlockHeader" FROM bitcoin;
+GRANT ALL ON TABLE "BlockHeader" TO bitcoin;
+
+
+--
+-- Name: BlockHeader_id_seq; Type: ACL; Schema: public; Owner: -
+--
+
+REVOKE ALL ON SEQUENCE "BlockHeader_id_seq" FROM PUBLIC;
+REVOKE ALL ON SEQUENCE "BlockHeader_id_seq" FROM bitcoin;
+GRANT ALL ON SEQUENCE "BlockHeader_id_seq" TO bitcoin;
+
+
+--
+-- Name: Block_block_id_seq; Type: ACL; Schema: public; Owner: -
+--
+
+REVOKE ALL ON SEQUENCE "Block_block_id_seq" FROM PUBLIC;
+REVOKE ALL ON SEQUENCE "Block_block_id_seq" FROM bitcoin;
+GRANT ALL ON SEQUENCE "Block_block_id_seq" TO bitcoin;
+
+
+--
+-- Name: Txn; Type: ACL; Schema: public; Owner: -
+--
+
+REVOKE ALL ON TABLE "Txn" FROM PUBLIC;
+REVOKE ALL ON TABLE "Txn" FROM nanne;
+GRANT ALL ON TABLE "Txn" TO nanne;
+GRANT ALL ON TABLE "Txn" TO bitcoin;
+
+
+--
+-- Name: TxnIn; Type: ACL; Schema: public; Owner: -
+--
+
+REVOKE ALL ON TABLE "TxnIn" FROM PUBLIC;
+REVOKE ALL ON TABLE "TxnIn" FROM nanne;
+GRANT ALL ON TABLE "TxnIn" TO nanne;
+GRANT ALL ON TABLE "TxnIn" TO bitcoin;
+
+
+--
+-- Name: TxnOut; Type: ACL; Schema: public; Owner: -
+--
+
+REVOKE ALL ON TABLE "TxnOut" FROM PUBLIC;
+REVOKE ALL ON TABLE "TxnOut" FROM nanne;
+GRANT ALL ON TABLE "TxnOut" TO nanne;
+GRANT ALL ON TABLE "TxnOut" TO bitcoin;
+
+
+--
+-- Name: Txn_id_seq; Type: ACL; Schema: public; Owner: -
+--
+
+REVOKE ALL ON SEQUENCE "Txn_id_seq" FROM PUBLIC;
+REVOKE ALL ON SEQUENCE "Txn_id_seq" FROM nanne;
+GRANT ALL ON SEQUENCE "Txn_id_seq" TO nanne;
+GRANT SELECT,USAGE ON SEQUENCE "Txn_id_seq" TO bitcoin;
+
+
+--
+-- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: public; Owner: -
+--
+
+ALTER DEFAULT PRIVILEGES FOR ROLE nanne IN SCHEMA public REVOKE ALL ON TABLES  FROM PUBLIC;
+ALTER DEFAULT PRIVILEGES FOR ROLE nanne IN SCHEMA public REVOKE ALL ON TABLES  FROM nanne;
+ALTER DEFAULT PRIVILEGES FOR ROLE nanne IN SCHEMA public GRANT ALL ON TABLES  TO bitcoin;
 
 
 --
